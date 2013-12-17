@@ -80,8 +80,6 @@
 
 (require 'eassist)
 (defun my-c-mode-cedet-hook ()
-  ;; (local-set-key "." 'semantic-complete-self-insert)
-  ;; (local-set-key ">" 'semantic-complete-self-insert)
   (local-set-key "\C-cf" 'eassist-switch-h-cpp)
   (local-set-key "\C-ce" 'eassist-list-methods)
   (local-set-key "\C-c\C-r" 'semantic-symref)
