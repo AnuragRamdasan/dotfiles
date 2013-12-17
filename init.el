@@ -5,6 +5,7 @@
 (setq stack-trace-on-error t)
 (global-unset-key (kbd "C-z"))
 
+
 ;; -----------------------------------------------------------------------------
 ;; ALL THE EMACS REPOSITORITES TO LIST PACKAGES
 ;; -----------------------------------------------------------------------------
@@ -13,7 +14,7 @@
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 ;; load necessary packages if not installed
 (when (not package-archive-contents)
@@ -32,8 +33,7 @@
 		      color-theme
 		      flycheck flymake
 		      yaml-mode
-		      ;; note-making
-		      org org-plus-contrib
+		      markdown-mode
 		      ;; language packages
 		      clojure-mode clojure-cheatsheet nrepl
 		      php-mode
@@ -51,7 +51,7 @@
   (when (not (package-installed-p p))
     (package-install p)))
 
-
+(load-file "~/.emacs.d/cedet-conf.el")
 ;; -----------------------------------------------------------------------------
 ;; REMAPPED KEYS
 ;; -----------------------------------------------------------------------------
@@ -71,8 +71,8 @@
 
 (setq frame-title-format
       '((:eval (if (buffer-file-name)
-           (abbreviate-file-name buffer-file-name)
-         "%b"))))
+		   (abbreviate-file-name buffer-file-name)
+		 "%b"))))
 
 
 
@@ -99,7 +99,7 @@
 ;;; Lisp (SLIME) interaction
 (show-paren-mode 1)
 (add-hook 'lisp-mode-hook '(lambda ()
-	(local-set-key (kbd "RET") 'newline-and-indent)))
+			     (local-set-key (kbd "RET") 'newline-and-indent)))
 
 
 ;; -----------------------------------------------------------------------------
@@ -108,7 +108,7 @@
 
 (delete-selection-mode t) ;; highlight a word and start typing, and it will delete the word and put your typed characters in it's place. highly annoying if not there.
 (setq make-backup-files nil) ;; disable backup files
-; text decoration
+					; text decoration
 (require 'font-lock)
 (setq font-lock-maximum-decoration t)
 (global-font-lock-mode t)
@@ -126,7 +126,7 @@
 (setq next-line-add-newlines nil) ;; Stop emacs from arbitrarily adding lines to the end of a file when the cursor is moved past the end of it:
 (setq visible-bell t) ;; Flash instead of that annoying bell
 (if (> emacs-major-version 20) ;; Remove icons toolbar
-(tool-bar-mode -1))
+    (tool-bar-mode -1))
 (menu-bar-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p) ;; Use y or n instead of yes or not
 (line-number-mode t) ;; show the current line and column numbers in the stats bar as well
@@ -143,7 +143,7 @@
 (global-visual-line-mode t)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (add-hook 'text-mode-hook
-  '(lambda() (set-fill-column 120)))
+	  '(lambda() (set-fill-column 120)))
 
 
 ;; -----------------------------------------------------------------------------
@@ -213,26 +213,69 @@
 ;; ORG-MODE
 ;; -----------------------------------------------------------------------------
 ;; requires configurations and dependencies of tex files installed
+(add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
+(add-to-list 'load-path "~/.emacs.d/org-mode/contrib/lisp" t)
 (require 'org)
-(require 'org-latex)
+(require 'ox-latex)
+(require 'ox-md)
+(require 'ox-odt)
+(require 'ox-html)
+(require 'ox-ascii)
+(require 'ox-deck)
+(require 'ox-beamer)
+(require 'ox-freemind)
 
-;; (add-to-list 'org-latex-classes
-;; 	     '("myarticle" "\\documentclass[a4paper,12pt]{article}
-;; \\usepackage{hyperref}            \\usepackage[utf8]{inputenc}
-;;              \\usepackage{lmodern}
-;;      \\author{Anurag}           \\usepackage[T1]{fontenc}
-;;                 \\usepackage{fixltx2e}
-;;                 \\newcommand\\foo{bar}
-;;                 [NO-DEFAULT-PACKAGES]
-;;                 [NO-PACKAGES]
-;;                 [EXTRA]"
-;; 	       ("\\section{%s}" . "\\section*{%s}")
-;; 	       ("\\subsection{%s}" . "\\subsection*{%s}")
-;; 	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-;; 	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-;; 	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+(setq org-export-dispatch-use-expert-ui nil ; non-intrusive export dispatch
+      org-latex-pdf-process                ; for regular export
+      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+	"xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+	"xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+;; (setq org-latex-to-pdf-process
+;;       '("xelatex --shell-escape -interaction nonstopmode %f"
+;; 	"xelatex --shell-escape -interaction nonstopmode %f")) ;; for multiple passes
+
+(add-to-list 'org-latex-classes
+	     '("myarticle"
+               "\\documentclass[11pt,a4paper]{article}
+                \\usepackage{minted}
+                \\usemintedstyle{emacs}
+                \\newminted{common-lisp}{fontsize=10}
+                \\usepackage[T1]{fontenc}
+                \\usepackage[hidelinks]{hyperref}
+                \\usepackage{fontspec}
+                \\usepackage{graphicx}
+                \\defaultfontfeatures{Mapping=tex-text}
+                \\setromanfont{Gentium}
+                \\setromanfont [BoldFont={Gentium Basic Bold},
+                  ItalicFont={Gentium Basic Italic}]{Gentium Basic}
+                \\setsansfont{Charis SIL}
+                \\setmonofont[Scale=0.8]{DejaVu Sans Mono}
+                \\usepackage{geometry}
+                \\geometry{a4paper, textwidth=6.5in, textheight=10in,
+                  marginparsep=7pt, marginparwidth=.6in}
+                \\pagestyle{empty}
+                \\title{}
+                  [NO-DEFAULT-PACKAGES]
+                  [NO-PACKAGES]"
+	       ("\\section{%s}" . "\\section*{%s}")
+	       ("\\subsection*{%s}" . "\\subsection*{%s}")
+	       ("\\subsubsection*{%s}" . "\\subsubsection*{%s}")
+	       ("\\paragraph*{%s}" . "\\paragraph*{%s}")
+	       ("\\subparagraph*{%s}" . "\\subparagraph*{%s}")))
 
 
+(setq org-export-latex-listings 'minted)
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+(setq org-export-latex-custom-lang-environments
+      '(
+	(emacs-lisp "common-lispcode")
+	))
+(setq org-export-latex-minted-options
+      '(("frame" "lines")
+	("fontsize" "\\scriptsize")
+	("linenos" "")
+	))
 
 ;; -----------------------------------------------------------------------------
 ;; CURSOR
@@ -261,7 +304,7 @@
 (setq rsense-home "/opt/rsense-0.3")
 (add-to-list 'load-path (concat rsense-home "/etc"))
 (setq load-path (cons (expand-file-name "~/.emacs.d/rails-reloaded") load-path))
-;(setq enh-ruby-program "/usr/bin/ruby")
+					;(setq enh-ruby-program "/usr/bin/ruby")
 
 (require 'rbenv)
 (require 'rsense)
@@ -278,7 +321,7 @@
 (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
 (add-hook 'enh-ruby-mode-hook 'robe-mode)
 
-; (push 'company-robe company-backends)
+					; (push 'company-robe company-backends)
 (push 'ac-source-robe ac-sources)
 
 (defun ruby-interpolate ()
@@ -348,6 +391,7 @@
 ;; -----------------------------------------------------------------------------
 ;; C PROGRAMMING
 ;; -----------------------------------------------------------------------------
+
 (require 'ctags)
 (require 'ctags-update)
 (require 'c-eldoc)
@@ -393,9 +437,9 @@
 			   (point))))))
 
 (add-hook 'c-mode-hook '(lambda ()
-	(local-set-key (kbd "C-c C-f C-u") 'my-move-function-up)
-	(local-set-key (kbd "C-c C-f C-d") 'my-move-function-down)
-	))
+			  (local-set-key (kbd "C-c C-f C-u") 'my-move-function-up)
+			  (local-set-key (kbd "C-c C-f C-d") 'my-move-function-down)
+			  ))
 
 
 ;; -----------------------------------------------------------------------------
@@ -422,4 +466,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-export-backends (quote (ascii beamer html icalendar latex md odt confluence))))
+ '(org-export-backends (quote (ascii beamer latex md odt confluence deck freemind))))
