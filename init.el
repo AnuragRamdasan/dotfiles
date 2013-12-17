@@ -14,7 +14,7 @@
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
 (package-initialize)
 ;; load necessary packages if not installed
 (when (not package-archive-contents)
@@ -51,6 +51,7 @@
   (when (not (package-installed-p p))
     (package-install p)))
 
+;; cedet needs to be loaded before anything else
 (load-file "~/.emacs.d/cedet-conf.el")
 ;; -----------------------------------------------------------------------------
 ;; REMAPPED KEYS
@@ -178,10 +179,7 @@
 ;;(require 'flx-ido)
 (ido-mode 1)
 (ido-everywhere 1)
-;;(flx-ido-mode 1)
-;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
-;;(setq ido-enable-flex-matching t)
 
 
 ;; -----------------------------------------------------------------------------
@@ -213,8 +211,10 @@
 ;; ORG-MODE
 ;; -----------------------------------------------------------------------------
 ;; requires configurations and dependencies of tex files installed
+;; download and build org. Elpa distribution almost always gives bugs.
 (add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
 (add-to-list 'load-path "~/.emacs.d/org-mode/contrib/lisp" t)
+
 (require 'org)
 (require 'ox-latex)
 (require 'ox-md)
@@ -224,16 +224,13 @@
 (require 'ox-deck)
 (require 'ox-beamer)
 (require 'ox-freemind)
+(require 'ox-confluence)
 
-(setq org-export-dispatch-use-expert-ui nil ; non-intrusive export dispatch
+(setq org-export-dispatch-use-expert-ui nil
       org-latex-pdf-process                ; for regular export
       '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	"xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	"xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-
-;; (setq org-latex-to-pdf-process
-;;       '("xelatex --shell-escape -interaction nonstopmode %f"
-;; 	"xelatex --shell-escape -interaction nonstopmode %f")) ;; for multiple passes
 
 (add-to-list 'org-latex-classes
 	     '("myarticle"
@@ -258,7 +255,7 @@
                 \\title{}
                   [NO-DEFAULT-PACKAGES]
                   [NO-PACKAGES]"
-	       ("\\section{%s}" . "\\section*{%s}")
+	       ("\\section*{%s}" . "\\section*{%s}") ;; asterisk prevents numbering
 	       ("\\subsection*{%s}" . "\\subsection*{%s}")
 	       ("\\subsubsection*{%s}" . "\\subsubsection*{%s}")
 	       ("\\paragraph*{%s}" . "\\paragraph*{%s}")
@@ -321,7 +318,7 @@
 (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
 (add-hook 'enh-ruby-mode-hook 'robe-mode)
 
-					; (push 'company-robe company-backends)
+;; (push 'company-robe company-backends)
 (push 'ac-source-robe ac-sources)
 
 (defun ruby-interpolate ()
@@ -373,6 +370,7 @@
 ;; ------------------------------------------------------------------------
 ;; WEB-MODE
 ;; ------------------------------------------------------------------------
+;; duplicate html template support for yasnippets to support web mode too.
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
@@ -451,8 +449,6 @@
 (set-face-background 'ac-candidate-face "lightgray")
 (set-face-underline 'ac-candidate-face "darkgray")
 (set-face-background 'ac-selection-face "steelblue")
-
-;;(add-to-list 'custom-theme-load-path "~/.emacs.d/")
 
 (require 'color-theme)
 (color-theme-initialize)
