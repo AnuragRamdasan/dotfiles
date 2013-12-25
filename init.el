@@ -366,6 +366,11 @@
 	    (define-key haml-mode-map "\C-m" 'newline-and-indent)))
 
 
+;; REPL driven development using PRY
+(add-to-list 'load-path "~/.emacs.d/ruby-dev.el" )
+(autoload 'turn-on-ruby-dev "ruby-dev" nil t)
+(add-hook 'enh-ruby-mode-hook 'turn-on-ruby-dev)
+
 
 ;; ------------------------------------------------------------------------
 ;; WEB-MODE
@@ -462,4 +467,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-export-backends (quote (ascii beamer latex md odt confluence deck freemind))))
+ '(org-export-backends (quote (ascii beamer latex md odt confluence deck freemind)))
+ '(org-support-shift-select (quote always))
+ '(send-mail-function (quote smtpmail-send-it)))
+
+(defun disable-magit-highlight-in-buffer ()
+  (face-remap-add-relative 'magit-item-highlight '()))
+(add-hook 'magit-status-mode-hook 'disable-magit-highlight-in-buffer)
