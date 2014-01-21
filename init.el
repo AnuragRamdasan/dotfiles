@@ -1,6 +1,8 @@
+
+
 ;; -----------------------------------------------------------------------------
 ;; DISPLAY ERROR TRACE IF ANY
-;; -----------------------------------------------------------------------------
+;;-----------------------------------------------------------------------------
 (setq debug-on-error t)
 (setq stack-trace-on-error t)
 (global-unset-key (kbd "C-z"))
@@ -21,7 +23,8 @@
   (package-refresh-contents))
 
 (defvar my-packages '(;; utility packages
-		      ace-jump-buffer ace-jump-mode
+		      ace-jump-buffer
+		      ace-jump-mode
 		      expand-region
 		      powerline
 		      projectile helm helm-projectile grizzl
@@ -37,7 +40,7 @@
 		      ;; language packages
 		      clojure-mode clojure-cheatsheet nrepl
 		      php-mode
-		      js2-mode
+		      js2-mode angular-snippets js-comint
 		      css-mode
 		      json-mode
 		      ;; ruby and rails setup
@@ -53,29 +56,7 @@
 
 ;; cedet needs to be loaded before anything else
 (load-file "~/.emacs.d/cedet-conf.el")
-;; -----------------------------------------------------------------------------
-;; REMAPPED KEYS
-;; -----------------------------------------------------------------------------
-;;resize windows easily
-(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "S-C-<down>") 'shrink-window)
-(global-set-key (kbd "S-C-<up>") 'enlarge-window)
-
-;;easy navigation through the buffers
-(global-set-key (kbd "C-x C-<up>") 'windmove-up)
-(global-set-key (kbd "C-x C-<down>") 'windmove-down)
-(global-set-key (kbd "C-x C-<right>") 'windmove-right)
-(global-set-key (kbd "C-x C-<left>") 'windmove-left)
-
-(define-key global-map (kbd "RET") 'newline-and-indent)
-
-(setq frame-title-format
-      '((:eval (if (buffer-file-name)
-		   (abbreviate-file-name buffer-file-name)
-		 "%b"))))
-
-
+(load-file "~/.emacs.d/custom.el")
 
 ;; -----------------------------------------------------------------------------
 ;; MAIN LOAD PATH
@@ -106,6 +87,7 @@
 ;; -----------------------------------------------------------------------------
 ;; FLAGS FOR EMACS
 ;; -----------------------------------------------------------------------------
+(yas-global-mode)
 
 (delete-selection-mode t) ;; highlight a word and start typing, and it will delete the word and put your typed characters in it's place. highly annoying if not there.
 (setq make-backup-files nil) ;; disable backup files
@@ -136,6 +118,9 @@
 (global-auto-revert-mode t) ;; reload pages once changed on disk
 (global-undo-tree-mode t)
 (add-hook 'before-save-hook 'delete-trailing-whitespace) ;; deletes all whitespace that isn't needed.
+
+(setq-default fill-column 80)
+(add-hook 'prog-mode-hook (lambda()(auto-fill-mode)))
 
 
 ;; -----------------------------------------------------------------------------
@@ -195,15 +180,14 @@
 ;; -----------------------------------------------------------------------------
 ;; PYTHON SETTINGS FROM https://github.com/gabrielelanaro/emacs-for-python in emacs.d
 ;; -----------------------------------------------------------------------------
-(add-to-list 'load-path "~/.emacs.d/emacs-for-python/")
-(require 'epy-setup)      ;; It will setup other loads, it is required!
-(require 'epy-python)     ;; If you want the python facilities [optional]
-(require 'epy-completion) ;; If you want the autocompletion settings [optional]
-(require 'epy-editing)    ;; For configurations related to editing [optional]
-(setq skeleton-pair nil)
-(epy-django-snippets)
-(setq skeleton-pair nil)
-(add-to-list 'ac-modes 'enh-ruby-mode)
+;; (add-to-list 'load-path "~/.emacs.d/emacs-for-python/")
+;; (require 'epy-setup)      ;; It will setup other loads, it is required!
+;; (require 'epy-python)     ;; If you want the python facilities [optional]
+;; (require 'epy-completion) ;; If you want the autocompletion settings [optional]
+;; (require 'epy-editing)    ;; For configurations related to editing [optional]
+;; (setq skeleton-pair nil)
+;; (epy-django-snippets)
+;; (setq skeleton-pair nil)
 (add-to-list 'ac-modes 'web-mode)
 
 
@@ -301,7 +285,7 @@
 (setq rsense-home "/opt/rsense-0.3")
 (add-to-list 'load-path (concat rsense-home "/etc"))
 (setq load-path (cons (expand-file-name "~/.emacs.d/rails-reloaded") load-path))
-					;(setq enh-ruby-program "/usr/bin/ruby")
+;(setq enh-ruby-program "/usr/bin/ruby")
 
 (require 'rbenv)
 (require 'rsense)
@@ -312,6 +296,18 @@
 (require 'ruby-block)
 (require 'robe)
 (require 'haml-mode)
+
+(add-to-list 'ac-modes 'enh-ruby-mode)
+
+(add-to-list 'auto-mode-alist '("Jbuilder" . ruby-mode))
+(add-to-list 'auto-mode-alist '("rake" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
+
+
+;; Use this to generate TAGS
+;; ctags-exuberant -a -e -f TAGS --tag-relative -R app lib vendor
+(setq rinari-tags-file-name "TAGS")
 
 (add-hook 'enh-ruby-mode-hook '(lambda ()
 				 (electric-indent-mode)))
@@ -342,7 +338,7 @@
       (pop-to-buffer other-buffer))))
 
 
-(eval-after-load 'ruby-mode
+(eval-after-load 'enh-ruby-mode
   '(progn
      (define-key ruby-mode-map (kbd "C-c ,") 'ruby-open-spec-other-buffer)
      (define-key ruby-mode-map (kbd "#") 'ruby-interpolate)
@@ -398,8 +394,10 @@
 (require 'ctags)
 (require 'ctags-update)
 (require 'c-eldoc)
+(require 'disaster)
 
 (add-hook 'c-mode 'turn-on-eldoc-mode)
+(define-key c-mode-base-map (kbd "C-c a") 'disaster)
 
 (setq path-to-ctags "/opt/local/bin/ctags") ;; <- ctags path
 (defun create-tags (dir-name)
@@ -444,6 +442,17 @@
 			  (local-set-key (kbd "C-c C-f C-d") 'my-move-function-down)
 			  ))
 
+(add-hook 'c-mode-hook
+	  '(lambda ()
+	     (add-to-list
+	      'ac-omni-completion-sources
+	      (cons "\\." '(ac-source-semantic)))
+	     (add-to-list
+	      'ac-omni-completion-sources
+	      (cons "->" '(ac-source-semantic)))
+	     (setq ac-sources
+		   '(ac-source-semantic
+		     ac-source-yasnippet))))
 
 ;; -----------------------------------------------------------------------------
 ;; THEME
@@ -467,10 +476,47 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(fill-column 80)
  '(org-export-backends (quote (ascii beamer latex md odt confluence deck freemind)))
  '(org-support-shift-select (quote always))
+ '(scheme-program-name "petite")
  '(send-mail-function (quote smtpmail-send-it)))
 
 (defun disable-magit-highlight-in-buffer ()
   (face-remap-add-relative 'magit-item-highlight '()))
 (add-hook 'magit-status-mode-hook 'disable-magit-highlight-in-buffer)
+
+
+;; Petite Scheme
+(setq auto-mode-alist (cons '("\\.scm" . scheme-mode) auto-mode-alist))
+(font-lock-add-keywords 'scheme-mode
+                        '(("unless" . font-lock-keyword-face)))
+
+(global-auto-complete-mode 1)
+;; ;; dirty fix for having AC everywhere
+;; (define-globalized-minor-mode real-global-auto-complete-mode
+;;   auto-complete-mode (lambda ()
+;; 		       (if (not (minibufferp
+;; 				 (current-buffer)))
+;; 			   (auto-complete-mode
+;; 			    1))
+;; 		       ))
+;; (real-global-auto-complete-mode t)
+
+
+;; -----------------------------------------------------------------------------
+;; JAVASCRIPT
+;; -----------------------------------------------------------------------------
+(add-to-list 'auto-mode-alist '("js" . js2-mode))
+(require 'js-comint)
+;; Use node as our repl
+(setq inferior-js-program-command "node")
+
+(setq inferior-js-mode-hook
+      (lambda ()
+	(ansi-color-for-comint-mode-on)
+	(add-to-list 'comint-preoutput-filter-functions
+		     (lambda (output)
+		       (replace-regexp-in-string
+			".*1G\.\.\..*5G" "..."
+			(replace-regexp-in-string ".*1G.*3G" "&gt;" output))))))
