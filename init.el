@@ -1,5 +1,3 @@
-
-
 ;; -----------------------------------------------------------------------------
 ;; DISPLAY ERROR TRACE IF ANY
 ;;-----------------------------------------------------------------------------
@@ -285,7 +283,6 @@
 (setq rsense-home "/opt/rsense-0.3")
 (add-to-list 'load-path (concat rsense-home "/etc"))
 (setq load-path (cons (expand-file-name "~/.emacs.d/rails-reloaded") load-path))
-;(setq enh-ruby-program "/usr/bin/ruby")
 
 (require 'rbenv)
 (require 'rsense)
@@ -314,7 +311,6 @@
 (add-hook 'enh-ruby-mode-hook 'inf-ruby-minor-mode)
 (add-hook 'enh-ruby-mode-hook 'robe-mode)
 
-;; (push 'company-robe company-backends)
 (push 'ac-source-robe ac-sources)
 
 (defun ruby-interpolate ()
@@ -493,15 +489,6 @@
                         '(("unless" . font-lock-keyword-face)))
 
 (global-auto-complete-mode 1)
-;; ;; dirty fix for having AC everywhere
-;; (define-globalized-minor-mode real-global-auto-complete-mode
-;;   auto-complete-mode (lambda ()
-;; 		       (if (not (minibufferp
-;; 				 (current-buffer)))
-;; 			   (auto-complete-mode
-;; 			    1))
-;; 		       ))
-;; (real-global-auto-complete-mode t)
 
 
 ;; -----------------------------------------------------------------------------
