@@ -82,13 +82,15 @@
      (paren-face-match-light ((t (:foreground "#FFC66D" :background "#555577"))))
      (highlight ((t (:background "darkolivegreen"))))
      (italic ((t (:italic t))))
-     (modeline ((t (:background "#FFFFFF" :foreground "#000000"))))
-     (modeline-buffer-id ((t (:background "#FFFFFF" :foreground
-					  "black"))))
-     (modeline-mousable ((t (:background "#A5BAF1" :foreground
+     (modeline ((t (:background "#171717" :foreground "#grey75" :bold nil))))
+     (modeline-buffer-id ((t (:background "#171717" :foreground
+					  "grey75"))))
+     (modeline-mousable ((t (:background "#000000" :foreground
 					 "black"))))
      (modeline-mousable-minor-mode ((t (:background
 					"#A5BAF1" :foreground "black"))))
+;     '(mode-line ((t (:background "black" :foreground "grey75" :box (:line-width -1 :style released-button)))))
+;     '(mode-line-inactive ((t (:inherit mode-line :background "black" :foreground "grey75" :box (:line-width -1 :color "grey40") :weight light))))
      (region ((t (:background "color-240"))))
      (primary-selection ((t (:background "#555577"))))
      (isearch ((t (:background "#555555"))))
