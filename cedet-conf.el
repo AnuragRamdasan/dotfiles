@@ -16,7 +16,7 @@
 ;; switch between header and source             C-c f
 ;; list all functions in the current file       C-c e
 ;; find all reference of symbol at point        C-c C-r
-
+;; autocomplete options in buffer               C-c , SPC
 
 (load-file "~/.emacs.d/cedet/cedet-devel-load.el")
 ;; if this gives error, run make from within contrib
@@ -95,3 +95,4 @@
   (semantic-load-enable-primary-ectags-support))
 
 (global-ede-mode t)
+(semantic-load-enable-code-helpers)

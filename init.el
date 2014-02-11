@@ -36,7 +36,8 @@
 		      yaml-mode
 		      markdown-mode
 		      ;; language packages
-		      clojure-mode clojure-cheatsheet nrepl
+		      clojure-mode clojure-cheatsheet cider
+		      rainbow-delimiters paredit
 		      php-mode
 		      js2-mode angular-snippets js-comint
 		      css-mode
@@ -85,7 +86,7 @@
 ;; -----------------------------------------------------------------------------
 ;; FLAGS FOR EMACS
 ;; -----------------------------------------------------------------------------
-(yas-global-mode)
+;(yas-global-mode)
 
 (delete-selection-mode t) ;; highlight a word and start typing, and it will delete the word and put your typed characters in it's place. highly annoying if not there.
 (setq make-backup-files nil) ;; disable backup files
@@ -148,13 +149,22 @@
 ;; CLOJURE
 ;; -----------------------------------------------------------------------------
 (require 'clojure-mode)
-(require 'nrepl)
-(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
+(require 'cider)
+;(require 'rainbow-delimiters)
+;(require  'paredit)
+(add-hook 'clojure-mode-hook 'paredit-mode)
+(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 (setq nrepl-hide-special-buffers t)
 (add-hook 'clojure-mode-hook 'turn-on-eldoc-mode)
-;; Repl mode hook
-(add-hook 'nrepl-mode-hook 'subword-mode)
-
+(setq cider-repl-tab-command 'indent-for-tab-command)
+(setq nrepl-buffer-name-separator "-")
+(setq nrepl-buffer-name-show-port t)
+(setq cider-repl-use-clojure-font-lock t)
+(add-hook 'cider-repl-mode-hook 'subword-mode)
+(add-hook 'cider-repl-mode-hook 'paredit-mode)
+(add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+(add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))
 
 ;; -----------------------------------------------------------------------------
 ;; IDO MODE
@@ -178,14 +188,14 @@
 ;; -----------------------------------------------------------------------------
 ;; PYTHON SETTINGS FROM https://github.com/gabrielelanaro/emacs-for-python in emacs.d
 ;; -----------------------------------------------------------------------------
-;; (add-to-list 'load-path "~/.emacs.d/emacs-for-python/")
-;; (require 'epy-setup)      ;; It will setup other loads, it is required!
-;; (require 'epy-python)     ;; If you want the python facilities [optional]
-;; (require 'epy-completion) ;; If you want the autocompletion settings [optional]
-;; (require 'epy-editing)    ;; For configurations related to editing [optional]
-;; (setq skeleton-pair nil)
-;; (epy-django-snippets)
-;; (setq skeleton-pair nil)
+(add-to-list 'load-path "~/.emacs.d/emacs-for-python/")
+(require 'epy-setup)      ;; It will setup other loads, it is required!
+(require 'epy-python)     ;; If you want the python facilities [optional]
+(require 'epy-completion) ;; If you want the autocompletion settings [optional]
+(require 'epy-editing)    ;; For configurations related to editing [optional]
+(setq skeleton-pair nil)
+(epy-django-snippets)
+(setq skeleton-pair nil)
 (add-to-list 'ac-modes 'web-mode)
 
 
@@ -273,7 +283,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+'(mode-line ((t (:background "#171717" :foreground "grey75" :box (:line-width -1 :style released-button)))))
+'(mode-line-inactive ((t (:inherit mode-line :background "#171717" :foreground
+				   "grey75" :box (:line-width -1 :color
+							      "grey40") :weight
+							      light)))))
 
 
 ;; --------------------------------------------------------------------
@@ -296,12 +310,20 @@
 
 (add-to-list 'ac-modes 'enh-ruby-mode)
 
-(add-to-list 'auto-mode-alist '("Jbuilder" . ruby-mode))
-(add-to-list 'auto-mode-alist '("rake" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Jbuilder" . enh-ruby-mode))
+(add-to-list 'auto-mode-alist '("rake" . enh-ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile" . enh-ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile" . enh-ruby-mode))
 
+(defun rails-generate-tags(a)
+  (interactive "Da?")
+  (shell-command (format "bash -c %s"
+			 (concat a
+				 " ctags-exuberant -a -e -f "
+				 "TAGS --tag-relative -R app "
+				 "lib vendor"))))
 
+(add-hook 'rinari 'rails-generate-tags)
 ;; Use this to generate TAGS
 ;; ctags-exuberant -a -e -f TAGS --tag-relative -R app lib vendor
 (setq rinari-tags-file-name "TAGS")
@@ -473,6 +495,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fill-column 80)
+ '(js2-basic-offset 2)
  '(org-export-backends (quote (ascii beamer latex md odt confluence deck freemind)))
  '(org-support-shift-select (quote always))
  '(scheme-program-name "petite")
@@ -507,3 +530,6 @@
 		       (replace-regexp-in-string
 			".*1G\.\.\..*5G" "..."
 			(replace-regexp-in-string ".*1G.*3G" "&gt;" output))))))
+
+
+(put 'narrow-to-region 'disabled nil)
