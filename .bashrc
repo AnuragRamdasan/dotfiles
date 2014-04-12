@@ -95,7 +95,6 @@ alias l='ls -CF'
 #aliases added by me
 alias ..='cd ..'
 alias vi='sudo vi'
-alias emacs='sudo emacs -nw'
 alias nano='sudo nano'
 alias install='sudo apt-get install -y'
 alias update='sudo apt-get update && sudo apt-get upgrade'
@@ -149,3 +148,4 @@ _completemarks() {
 }
 
 complete -F _completemarks jump unmark
+export PATH=/usr/local/Gambit-C/bin:$PATH
