@@ -54,7 +54,7 @@
     (package-install p)))
 
 ;; cedet needs to be loaded before anything else
-(load-file "~/.emacs.d/cedet-conf.el")
+;; x(load-file "~/.emacs.d/cedet-conf.el")
 (load-file "~/.emacs.d/custom.el")
 
 ;; -----------------------------------------------------------------------------
@@ -73,10 +73,14 @@
 ;; -----------------------------------------------------------------------------
 ;; SLIME
 ;; -----------------------------------------------------------------------------
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/slime")
-(setq inferior-lisp-program "/usr/bin/sbcl")
-(require 'slime)
-(slime-setup)
+(add-to-list 'load-path "/opt/local/share/emacs/site-lisp/slime")
+(require 'slime-autoloads)
+(setq slime-lisp-implementations
+     `((sbcl ("/opt/local/bin/sbcl"))
+       (abcl ("/opt/local/bin/abcl"))
+       (clisp ("/opt/local/bin/clisp"))))
+(slime-setup  '(slime-repl slime-asdf slime-fancy slime-banner))
+
 ;;; Lisp (SLIME) interaction
 (show-paren-mode 1)
 (add-hook 'lisp-mode-hook '(lambda ()
@@ -103,9 +107,11 @@
 (show-paren-mode t)
 (setq inhibit-startup-message t) ;; Disable the welcome message
 (setq frame-title-format "emacs - %b") ;; Format the title-bar to always include the buffer name
-(mouse-wheel-mode t) ;; Make the mouse wheel scroll Emacs
+;;(mouse-wheel-mode t) ;; Make the mouse wheel scroll Emacs
 (setq require-final-newline t) ;; Always end a file with a newline
-(setq next-line-add-newlines nil) ;; Stop emacs from arbitrarily adding lines to the end of a file when the cursor is moved past the end of it:
+(setq next-line-add-newlines nil) ;; Stop emacs from arbitrarily adding lines to
+;; the end of a file when the cursor is moved past the end of it:
+(toggle-scroll-bar -1)
 (setq visible-bell t) ;; Flash instead of that annoying bell
 (if (> emacs-major-version 20) ;; Remove icons toolbar
     (tool-bar-mode -1))
@@ -296,10 +302,10 @@
 
 (setq rsense-home "/opt/rsense-0.3")
 (add-to-list 'load-path (concat rsense-home "/etc"))
-(setq load-path (cons (expand-file-name "~/.emacs.d/rails-reloaded") load-path))
+(setq load-path (cons (expand-file-name "~/.emacs.d/emacs-rails-reloaded") load-path))
 
 (require 'rbenv)
-(require 'rsense)
+;; (require 'rsense)
 (require 'rinari)
 (require 'rails-autoload)
 (require 'ruby-mode)
@@ -381,9 +387,9 @@
 
 
 ;; REPL driven development using PRY
-(add-to-list 'load-path "~/.emacs.d/ruby-dev.el" )
-(autoload 'turn-on-ruby-dev "ruby-dev" nil t)
-(add-hook 'enh-ruby-mode-hook 'turn-on-ruby-dev)
+;(add-to-list 'load-path "~/.emacs.d/ruby-dev.el" )
+;(autoload 'turn-on-ruby-dev "ruby-dev" nil t)
+;(add-hook 'enh-ruby-mode-hook 'turn-on-ruby-dev)
 
 
 ;; ------------------------------------------------------------------------
@@ -533,3 +539,6 @@
 
 
 (put 'narrow-to-region 'disabled nil)
+
+(set-display-table-slot standard-display-table
+                        'vertical-border (make-glyph-code 0000))
