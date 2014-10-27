@@ -305,16 +305,16 @@
 (add-to-list 'load-path (concat rsense-home "/etc"))
 (setq load-path (cons (expand-file-name "~/.emacs.d/emacs-rails-reloaded") load-path))
 
-(require 'rbenv)
 ;; (require 'rsense)
 (require 'rinari)
 (require 'rails-autoload)
 (require 'ruby-mode)
-(require 'ruby-mode)
 (require 'ruby-block)
 (require 'robe)
+(require 'rvm)
+(rvm-use-default)
 (require 'haml-mode)
-
+(require 'bundler)
 (add-to-list 'ac-modes 'enh-ruby-mode)
 
 (add-to-list 'auto-mode-alist '("Jbuilder" . enh-ruby-mode))
@@ -501,12 +501,15 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("246a51f19b632c27d7071877ea99805d4f8131b0ff7acb8a607d4fd1c101e163" default)))
+ '(edts-man-root "/Users/anurag/.emacs.d/edts/doc/17.0")
  '(fill-column 80)
- '(js2-basic-offset 2)
+ '(js2-basic-offset 4)
  '(org-export-backends (quote (ascii beamer latex md odt confluence deck freemind)))
  '(org-support-shift-select (quote always))
  '(scheme-program-name "petite")
- '(send-mail-function (quote smtpmail-send-it)))
+ '(send-mail-function (quote smtpmail-send-it))
+ '(shift-select-mode t))
 
 (defun disable-magit-highlight-in-buffer ()
   (face-remap-add-relative 'magit-item-highlight '()))
