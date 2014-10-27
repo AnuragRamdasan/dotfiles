@@ -546,3 +546,28 @@
 
 (set-display-table-slot standard-display-table
                         'vertical-border (make-glyph-code 0000))
+
+
+;; -----------------------------------------------------------------------------
+;; DOCKERFILE
+;; -----------------------------------------------------------------------------
+(require 'dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+
+;; -----------------------------------------------------------------------------
+;; ERLANG
+;; -----------------------------------------------------------------------------
+;(add-hook 'after-init-hook 'my-after-init-hook)
+;(defun my-after-init-hook ()
+;  (require 'edts-start))
+(add-to-list 'auto-mode-alist '("\\.erl\\'" . erlang-mode))
+(add-to-list 'ac-modes 'erlang-mode)
+
+;; -----------------------------------------------------------------------------
+;; ELIXIR
+;; -----------------------------------------------------------------------------
+(require 'alchemist)
+(alchemist-mode 1)
+(add-to-list 'ac-modes 'elixir-mode)
+(add-hook 'elixir-mode-hook '(lambda ()
+			       (electric-indent-mode)))
