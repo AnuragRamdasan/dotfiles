@@ -44,9 +44,13 @@
 		      json-mode
 		      ;; ruby and rails setup
 		      rinari web-mode robe inf-ruby enh-ruby-mode
-		      rbenv yari ruby-block haml-mode
+		      rvm yari ruby-block haml-mode bundler
 		      ;; c programming
 		      ctags ctags-update c-eldoc
+		      ;; erlang
+		      edts erlang
+		      ;; elixir
+		      elixir-mode elixir-mix flymake-elixir
 		      ))
 
 (dolist (p my-packages)
@@ -226,9 +230,9 @@
 
 (setq org-export-dispatch-use-expert-ui nil
       org-latex-pdf-process                ; for regular export
-      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-	"xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-	"xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+      '("/opt/local/bin/xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+	"/opt/local/bin/xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+	"/opt/local/bin/xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
 (add-to-list 'org-latex-classes
 	     '("myarticle"
@@ -289,11 +293,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-'(mode-line ((t (:background "#171717" :foreground "grey75" :box (:line-width -1 :style released-button)))))
-'(mode-line-inactive ((t (:inherit mode-line :background "#171717" :foreground
-				   "grey75" :box (:line-width -1 :color
-							      "grey40") :weight
-							      light)))))
+ '(mode-line ((t (:background "#171717" :foreground "grey75" :box (:line-width -1 :style released-button)))))
+ '(mode-line-inactive ((t (:inherit mode-line :background "#171717" :foreground "grey75" :box (:line-width -1 :color "grey40") :weight light)))))
 
 
 ;; --------------------------------------------------------------------
