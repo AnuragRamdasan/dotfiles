@@ -35,22 +35,25 @@
 		      flycheck flymake
 		      yaml-mode
 		      markdown-mode
+                      exec-path-from-shell
 		      ;; language packages
 		      clojure-mode clojure-cheatsheet cider
 		      rainbow-delimiters paredit
 		      php-mode
-		      js2-mode angular-snippets js-comint
+		      js2-mode angular-snippets js-comint web-mode
 		      css-mode
 		      json-mode
+
 		      ;; ruby and rails setup
 		      rinari web-mode robe inf-ruby enh-ruby-mode
-		      rvm yari ruby-block haml-mode bundler
+		      rvm yari ruby-block haml-mode bundler slim-mode
 		      ;; c programming
 		      ctags ctags-update c-eldoc
 		      ;; erlang
 		      edts erlang
 		      ;; elixir
 		      elixir-mode elixir-mix flymake-elixir
+		      jsx-mode alchemist
 		      ))
 
 (dolist (p my-packages)
@@ -66,7 +69,6 @@
 ;; -----------------------------------------------------------------------------
 (add-to-list 'load-path "~/.emacs.d/")
 
-
 ;; -----------------------------------------------------------------------------
 ;; PACKAGES THAT AREN'T CUSTOMIZED
 ;; -----------------------------------------------------------------------------
@@ -77,13 +79,13 @@
 ;; -----------------------------------------------------------------------------
 ;; SLIME
 ;; -----------------------------------------------------------------------------
-(add-to-list 'load-path "/opt/local/share/emacs/site-lisp/slime")
-(require 'slime-autoloads)
-(setq slime-lisp-implementations
-     `((sbcl ("/opt/local/bin/sbcl"))
-       (abcl ("/opt/local/bin/abcl"))
-       (clisp ("/opt/local/bin/clisp"))))
-(slime-setup  '(slime-repl slime-asdf slime-fancy slime-banner))
+;; (add-to-list 'load-path "/opt/local/share/emacs/site-lisp/slime")
+;; (require 'slime-autoloads)
+;; (setq slime-lisp-implementations
+;;      `((sbcl ("/opt/local/bin/sbcl"))
+;;        (abcl ("/opt/local/bin/abcl"))
+;;        (clisp ("/opt/local/bin/clisp"))))
+;; (slime-setup  '(slime-repl slime-asdf slime-fancy slime-banner))
 
 ;;; Lisp (SLIME) interaction
 (show-paren-mode 1)
@@ -127,7 +129,8 @@
 (global-auto-revert-mode t) ;; reload pages once changed on disk
 (global-undo-tree-mode t)
 (add-hook 'before-save-hook 'delete-trailing-whitespace) ;; deletes all whitespace that isn't needed.
-
+(setq max-specpdl-size 1000)
+(setq max-lisp-eval-depth 1000)
 (setq-default fill-column 80)
 (add-hook 'prog-mode-hook (lambda()(auto-fill-mode)))
 
@@ -275,7 +278,6 @@
 	("fontsize" "\\scriptsize")
 	("linenos" "")
 	))
-
 ;; -----------------------------------------------------------------------------
 ;; CURSOR
 ;; -----------------------------------------------------------------------------
@@ -385,7 +387,7 @@
 	  (lambda ()
 	    (setq indent-tabs-mode nil)
 	    (define-key haml-mode-map "\C-m" 'newline-and-indent)))
-
+(add-to-list 'auto-mode-alist '("\\.slim\\'" . slim-mode))
 
 ;; REPL driven development using PRY
 ;(add-to-list 'load-path "~/.emacs.d/ruby-dev.el" )
@@ -504,7 +506,8 @@
  '(custom-safe-themes (quote ("246a51f19b632c27d7071877ea99805d4f8131b0ff7acb8a607d4fd1c101e163" default)))
  '(edts-man-root "/Users/anurag/.emacs.d/edts/doc/17.0")
  '(fill-column 80)
- '(js2-basic-offset 4)
+ '(indent-tabs-mode nil)
+ '(js2-basic-offset 2)
  '(org-export-backends (quote (ascii beamer latex md odt confluence deck freemind)))
  '(org-support-shift-select (quote always))
  '(scheme-program-name "petite")
@@ -522,8 +525,8 @@
                         '(("unless" . font-lock-keyword-face)))
 
 (global-auto-complete-mode 1)
-
-
+;(set-default-font "-apple-source code pro-medium-r-normal--22-130-72-72-m-130-iso10646-1")
+(set-default-font "-apple-Source_Code_Pro-medium-normal-normal-*-*-*-*-*-m-0-iso10646-1")
 ;; -----------------------------------------------------------------------------
 ;; JAVASCRIPT
 ;; -----------------------------------------------------------------------------
@@ -547,6 +550,36 @@
 (set-display-table-slot standard-display-table
                         'vertical-border (make-glyph-code 0000))
 
+(add-to-list 'auto-mode-alist '("\\.jsx$" . js2-mode))
+(require 'flycheck)
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
+(setq-default flycheck-disabled-checkers
+  (append flycheck-disabled-checkers
+    '(javascript-jshint)))
+
+;; use eslint with web-mode for jsx files
+;;(flycheck-add-mode 'javascript-eslint 'web-mode)
+;; adjust indents for web-mode to 2 spaces
+(defun my-web-mode-hook ()
+  "Hooks for Web mode. Adjust indents"
+  ;;; http://web-mode.org/
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2))
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+(add-hook 'js2-mode-hook  'my-web-mode-hook)
+(add-hook 'jsx-mode-hook  'my-web-mode-hook)
+;; disable json-jsonlist checking for json files
+(setq-default flycheck-disabled-checkers
+  (append flycheck-disabled-checkers
+    '(json-jsonlist)))
+
+;; https://github.com/purcell/exec-path-from-shell
+;; only need exec-path-from-shell on OSX
+;; this hopefully sets up path and other vars better
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
 
 ;; -----------------------------------------------------------------------------
 ;; DOCKERFILE
@@ -571,3 +604,36 @@
 (add-to-list 'ac-modes 'elixir-mode)
 (add-hook 'elixir-mode-hook '(lambda ()
 			       (electric-indent-mode)))
+(add-hook 'elixir-mode-hook '(lambda ()
+			       (ruby-block-mode)))
+
+;; ReactJS
+(require 'jsx-mode)
+;; (add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+;; (require 'flycheck)
+;; (flycheck-define-checker jsxhint-checker
+;;   "A JSX syntax and style checker based on JSXHint."
+
+;;   :command ("jsxhint" source)
+;;   :error-patterns
+;;   ((error line-start (1+ nonl) ": line " line ", col " column ", " (message) line-end))
+;;   :modes (jsx-mode))
+;; (add-hook 'jsx-mode-hook (lambda ()
+;;                           (flycheck-select-checker 'jsxhint-checker)
+;;                           (flycheck-mode)))
+
+(add-hook 'jsx-mode-hook
+          (lambda () (auto-complete-mode 1)))
+
+;; -----------------------------------------------------------------------------
+;; OCTAVE
+;; -----------------------------------------------------------------------------
+(autoload 'octave-mode "octave-mod" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+(add-hook 'octave-mode-hook
+          (lambda ()
+            (abbrev-mode 1)
+            (auto-fill-mode 1)
+            (if (eq window-system 'x)
+                (font-lock-mode 1))))

@@ -1,7 +1,3 @@
-export PATH=${PATH}:~/android-sdk-linux/tools
-export PATH=${PATH}:~/android-sdk-linux/platform-tools
-export PATH=${PATH}:/home/anuragramdasan/.rbenv/versions/2.0.0-p247/bin
-export VIMRUNTIME=/usr/share/vim/vim73
 export TERM=xterm-256color
 
  #~/.bashrc: executed by bash(1) for non-login shells.
@@ -94,10 +90,6 @@ alias l='ls -CF'
 
 #aliases added by me
 alias ..='cd ..'
-alias vi='sudo vi'
-alias nano='sudo nano'
-alias install='sudo apt-get install -y'
-alias update='sudo apt-get update && sudo apt-get upgrade'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -147,5 +139,19 @@ _completemarks() {
   return 0
 }
 
+export ANDROID_SDK="~/android-sdk"
+export ANDROID_NDK="~/android-ndk"
+export PATH="$PATH:$ANDROID_SDK/tools:$ANDROID_SDK/platform-tools:$ANDROID_NDK"
+
 complete -F _completemarks jump unmark
 export PATH=/usr/local/Gambit-C/bin:$PATH
+source ~/.profile
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+alias fuck='$(thefuck $(fc -ln -1))'
+
+export NVM_DIR="/Users/anurag/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+export ANDROID_HOME=/usr/local/opt/android-sdk

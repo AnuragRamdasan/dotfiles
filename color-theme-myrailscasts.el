@@ -62,12 +62,12 @@
       (mouse-color . "sienna1") ; avallark
       (cursor-color . "#5A647E") ;avallark
       (foreground-color . "#E6E1DC"))
-     (default ((t (:background "#000000" :foreground "#F8F8F8")))) ;avallark
+     (default ((t (:background "#232323" :foreground "#F8F8F8")))) ;avallark
      (blue ((t (:foreground "blue")))) ; avallark
      (bold ((t (:bold t))))
      (bold-italic ((t (:italic t :bold t))))
      (fringe ((t (:background "#000000"))))
-     (font-lock-builtin-face ((t (:foreground "#D0D0FF"))))
+     (font-lock-builtin-face ((t (:foregAround "#D0D0FF"))))
      (font-lock-comment-face ((t (:foreground "#BC9458" :italic t))))
      (font-lock-constant-face ((t (:foreground "#6D9CBE"))))
      (font-lock-doc-string-face ((t (:foreground "#A5C261"))))
