@@ -60,9 +60,9 @@
       (border-color . "#232323")
       (background-mode . dark)
       (mouse-color . "sienna1") ; avallark
-      (cursor-color . "#5A647E") ;avallark
+      (cursor-color . "#000000") ;avallark
       (foreground-color . "#E6E1DC"))
-     (default ((t (:background "#232323" :foreground "#F8F8F8")))) ;avallark
+     (default ((t (:background "#000000" :foreground "#F8F8F8")))) ;avallark
      (blue ((t (:foreground "blue")))) ; avallark
      (bold ((t (:bold t))))
      (bold-italic ((t (:italic t :bold t))))
@@ -91,7 +91,7 @@
 					"#A5BAF1" :foreground "black"))))
 ;     '(mode-line ((t (:background "black" :foreground "grey75" :box (:line-width -1 :style released-button)))))
 ;     '(mode-line-inactive ((t (:inherit mode-line :background "black" :foreground "grey75" :box (:line-width -1 :color "grey40") :weight light))))
-     (region ((t (:background "color-240"))))
+     (region ((t (:background "darkolivegreen"))))
      (primary-selection ((t (:background "#555577"))))
      (isearch ((t (:background "#555555"))))
      (zmacs-region ((t (:background "#555577"))))
