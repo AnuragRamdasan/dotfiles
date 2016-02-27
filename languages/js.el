@@ -12,7 +12,8 @@
 ;; EMACS PACKAGES
 ;; --------------------------------------------------------------------
 ;;(add-to-list 'auto-mode-alist '(".js" . js2-mode))
-
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist `(,(rx ".js" string-end) . js2-mode))
 ;; --------------------------------------------------------------------
 ;; EMACS CONFIGS
 ;; --------------------------------------------------------------------
